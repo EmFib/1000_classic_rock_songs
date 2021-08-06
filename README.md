@@ -104,12 +104,94 @@ I also created word clouds to visualize their most frequently-used words. (Again
 
 Finally, I used `numpy` to find the total number of words and total number of _unique_ words used by each artist across each of their 100-song corpuses that I had scraped. Some interesting takeaways here are .... 
 
-![uniquewords](num_words.png)
+![uniquewords](num_words7.png)
 
+### _**Findings**_  
++ Bob Dylan, at 4482 words, has 60% more unique words throughout his music than the artist with the next greatest number of unique words - Leonard Cohen at 2799.
++ The average number of unique words across all 11 artistis is 2463, and Dylan's count is 82% greater.
 
 ## Modeling
 
 The modeling I did included looking at cosine simlirities between the musicians and sentiment analysis across their bodies of work. 
+
+### Cosine Similarity 
+
+I used the `gensim` topic modeling library to find the cosine similarities between the different artists' lyrics. First, I put the ten 100-song catalogs for each artist into a corpus that included the lyrics for each artist into one list bulk set of words associated with that artist. From there, I transformed the corpus into the LSI space and indexed it using the deerwester index: 
+
+```python
+lsi = models.LsiModel(corpus, id2word=dictionary, num_topics=22)
+index = similarities.MatrixSimilarity(lsi[corpus]) 
+index.save('/tmp/deerwester.index')
+index = similarities.MatrixSimilarity.load('/tmp/deerwester.index')
+```
+
+From there, I was able to run similarity queries against the corpus. Query objects first need to be turned into LSI vectors. I then run similarity query against the entire corpus, thereby producing a similarity score between the entry and each of the ten artists. Here is an example with a favorite Allen Ginsberg poem:
+
+```python
+# sample with a quote from an Allen Ginsberg poem
+
+poem = "I had a moment of clarity, saw the feeling in the heart of things, walked out to the garden crying"
+
+vec_bow = dictionary.doc2bow(poem.lower().split())
+vec_lsi = lsi[vec_bow]    # convert query to LSI space 
+
+sims = index[vec_lsi]  # perform a similarity query against the corpus 
+
+sims = sorted(enumerate(sims), key=lambda item: -item[1])
+
+for position, score in sims:     #match similarity scores to artist names 
+    print(score, musicians[position][1])
+
+Output: 
+0.73411196 stevie_nicks
+0.6174557 linda_ronstadt
+0.52348113 neil_young
+0.4642533 leonard_cohen
+0.4258505 bob_dylan
+0.3937433 the_band
+0.3744713 willie_nelson
+0.35524225 john_prine
+0.2777136 mark_knopfler
+0.2609053 david_bowie
+0.20401922 janis_joplin
+```
+
+Once the system was up-and-running, I ran similarity queries for each artist's body of work against the other nine:
+
+```python
+artists = ['bob_dylan',
+ 'david_bowie',
+ 'janis_joplin',
+ 'john_prine',
+ 'leonard_cohen',
+ 'linda_ronstadt',
+ 'mark_knopfler',
+ 'neil_young',
+ 'stevie_nicks',
+ 'the_band',
+ 'willie_nelson']
+
+ similarities = pd.DataFrame(index=artists)
+
+for artist in artists: 
+        
+    artist_words = data['lyrics'][artist]
+    
+    artist_vec_bow = dictionary.doc2bow(artist_words.lower().split())
+    artist_vec_lsi = lsi[artist_vec_bow]
+    
+    artist_sims = index[artist_vec_lsi]
+    
+    artist_sims_sorted = sorted(enumerate(artist_sims), key=lambda item: -item[1])
+    
+    for position, score in artist_sims_sorted:
+    
+        similarities.at[artist, musicians[position][1]] = float(score)
+
+similarities = similarities.apply(pd.to_numeric)  # despite putting float in the above loop, still needed to use `pd.to_numeric` so that I could use the DF to create a heatmap
+```
+This produced a DataFrame with the similarity scores between each pair of artists:
+
 
 
 ## Evaluation & Analysis
