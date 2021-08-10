@@ -1,6 +1,6 @@
 # **TALK THE TALK, WALK THE WALK**
 
-## Table of Contents
+# Table of Contents
 
 - [Executive Summary](#Executive-Summary)
 - [Data Collection](#Data-Collection)
@@ -13,7 +13,7 @@
 
 
 
-## Executive Summary
+# Executive Summary
 
 For this project, I collected lyrics from the songs of twelve different classic rock musicians for the purpose of analyzing and comparing them using several different NLP methods. 
 
@@ -25,7 +25,7 @@ The NLP analyses so far performed on the data are:
 + Sentiment analysis 
 
 
-## Data Collection
+# Data Collection
 
 *See notebook: [01_data_collection](projects/bob_dylan/01_data_collection.ipynb)*
 
@@ -34,7 +34,7 @@ I collected song lyrics from Genius.com using their API and BeautifulSoup. Code 
 The functions I used can be found in the data collection notebook. 
 
 
-## Data Cleaning & Pre-Processing
+# Data Cleaning & Pre-Processing
 
 *See notebook: [02_data_cleaning](projects/bob_dylan/02_data_cleaning.ipynb)*
 
@@ -82,8 +82,7 @@ I also used scikit-learn's `CountVectorizer` to tokenize the text and remove sto
 **Much of the code for cleaning and processing the data was borrowed from the _excellent_ [Natural Language Processing in Python](https://www.youtube.com/watch?v=xvqsFTUsOmc&t=1s&ab_channel=PyOhio) tutorial by Alice Zhao at PyOhio and the materials that came along with it. Please check out the [YouTube video](https://www.youtube.com/watch?v=xvqsFTUsOmc&t=1s&ab_channel=PyOhio) to learn more about NLP than you will from most formal education.** 
 
 
-
-## EDA
+# EDA
 
 *See notebook: [03 - EDA](projects/classic_rock_lyrics/03_EDA.ipynb)*
 
@@ -106,15 +105,15 @@ Finally, I used `numpy` to find the total number of words and total number of _u
 
 ![uniquewords](num_words7.png)
 
-### _**Findings**_  
+### _**Takeaways**_  
 + Bob Dylan, at 4482 words, has 60% more unique words throughout his music than the artist with the next greatest number of unique words - Leonard Cohen at 2799.
 + The average number of unique words across all 11 artistis is 2463, and Dylan's count is 82% greater.
 
-## Modeling
+# Modeling
 
 The modeling I did included looking at cosine simlirities between the musicians and sentiment analysis across their bodies of work. 
 
-### Cosine Similarity 
+&emsp; **Cosine Similarity** 
 
 I used the `gensim` topic modeling library to find the cosine similarities between the different artists' lyrics. First, I put the ten 100-song catalogs for each artist into a corpus that included the lyrics for each artist into one list bulk set of words associated with that artist. From there, I transformed the corpus into the LSI space and indexed it using the deerwester index: 
 
@@ -190,49 +189,53 @@ for artist in artists:
 
 similarities = similarities.apply(pd.to_numeric)  # despite putting float in the above loop, still needed to use `pd.to_numeric` so that I could use the DF to create a heatmap
 ```
-This produced a DataFrame with the similarity scores between each pair of artists:
+This produced a DataFrame with the similarity scores between each pair of artists...
 
+![similarities](./similarities.png)
 
+... which i used to create this Seaborn heatmap: 
 
-## Evaluation & Analysis
+![heatmap](similarities_heatmap.png)
 
-I then used this fit pipeline to execute my `find_most_important_words` and `plot_most_important_words` functions. Plotting the top 25 most important words from each subreddit yielded the following figures:
+##### _Note: I chose to produce the heatmap using the `similarities` DataFrame as is instead of converting to `similarities.corr()` since it was already showing correlation scores between each pair of artists._ 
 
-![importances](./code/figures/importance.png)
+### _**Takeaways**_  
 
-This plot clearly show the most important words in classifying these subreddits, which speaks directly to the problem statement in my executive summary. This, in turn, performs the task for which I was hoping: drawing out the trends of the discussion in the subreddit.
+- The lyrics of songs by Bob Dylan, The Band, John Prine, Willie Nelson, and Neil Young exhibit the strongest similarities to one another. This is unsurprising for those familiar with their music, and many of them collaborated regularly and were heavily influenced by one another. Furthermore, Bob Dylan turned up high similarity scores with several of the other artists, perhaps as a result of his high number of unique words. (If you say a lot of words, there's a higher chance that some of it will align with otherwords!)
+    -   **Cosine similarity score between Bob Dylan and John Prine is the highest: 0.85.** They are both known for their descriptive, personal, and compelling lyrics. Plus they've played together and have each expressed great respect for the other.
+    - **Similarity score between Bob Dylan and The Band is 0.84.** The Band was Dylan's back-up band for many years and the collective is known to have written music together, so the mutual influence is inherent and now data science-proven! 
+    - **Similarity score btween Bob Dylan and Neil Young is also 0.84.** Both cut their song-writing teeth during the late 60s and early 70s and have continuously been regarded as two of the most skilled and influential songwriters. 
+- Janis Joplin's lyrics show to be the least similar to other artists, across the board. This is not surprising, but I do wonder about how this breaks down behind the `gensim` similarity query magic. All similarity scores between her and other artists were between 0.6 and 0.7, with three of them being 0.60. Janis's  highest score of 0.68 is with Linda Ronstadt -- another female artist.  `¯\_(ツ)_/¯`
+- David Bowie's lyrics also exhibited low similarity scores with other artists, and his highest score - 0.78 - was also with Linda Ronstadt. 
 
-Importantly, simply for the purposes of visualization, I used Principle Component Analysis to reduce my 14,594 features down to two dimensions so that the vectorized country-rock DataFrame could be represented in a scatter plot.
+&emsp; **Sentiment Analysis** 
 
-![binary](./code/figures/binary.png)
+I used the Python [TextBlob](https://textblob.readthedocs.io/en/dev/) library to evaluate the subjectivity (fact vs. opinion) and polarity (negative vs. positive) of each artist's 100-song catalog. 
 
-The purpose of this plot is merely to represent how to the two classes, while overlapping, are indeed somewhat distinct from each other. This bolsters the analysis by further reinforcing that the word importances being pulled out of the model are distinctive to that subreddit as opposed to being more general.
+![sentiment](sentiment_analysis.png)
 
-## Conclusion & Recommendations
+Given that song-writing is assumed to be fictional story-telling, both of these metrics are somewhat less relevant for lyrical compositions than for other purposes, i.e. online reviews or news stories. They are also less salient because that we are taking each artist's body of work as a whole, as opposed to song-by-song or split up by timeline (song-specific sentiment analysis is something that I hope to do someday though!). I do find it interesting to see what data science has to say about how positive different musicians are according to their words of their songs. The facts <--> opinions scale, as well, is more thought-provoking than anything, but the question of whether someone's songs are more autobiographical or more fantastical is a hot topic amongst musicphiles, and the subjectivity score would provide relevant fodder for such a discussion, alas. So... 
 
-And there you go! If you wish to know what's on the hearts and minds of fans of country and rock music; if you wish to speak to what is resonating with them; to write salient songs; to market and advertise profitably; to book shows that will sell out: start with this list of words and names.
+### _**Takeaways**_  
 
-## Next Steps & Future work
+##### _(to be taken with a grain of salt)_
+
++ The Band, Bob Dylan, and John Prine are once again clumped together far on the negative side of the spectrum. Not entirely surprising, but I'd be very curious to understand better what elements of their lyrics caused them to point in this direction. _(Does anyone know how best to gain this sort of insight??)_
++ The Band, Bob Dylan, and John Prine all have scores putting their lyrics much closer to the Facts side than the opinions side, with Prine have the highest facts-leaning score. I theorize that this is because they all have vivid, verbose descriptions in their work, which could sound closer to a true story. 
++ Surprisingly, Janis Joplin had the highest "positive score." 
++ Linda Ronstadt, Stevie Nicks, Janis - the only three female musicians in the bunch - all exhibit very high positivity scores (with only Neil Young being close to the gals in this regard) but have vastly different subjectvity scores. According to this analysis, Linda's lyrics are all opinions, Stevie's are more facts, and Janis is right in the middle.
+
+##### _Note: This method for sentiment analysis was drawn from the _______ tutorial cited earlier._ 
+
+## Evaluation & Next Steps 
 
 With more time and a bigger scope, there's a whole lot more I would like to do with the Reddit database and this concept. First and foremost:
 
 + Incorporate other NLP modeling techniques, such as spaCy and/or Word2vec.
-+ Run additional Tree/Ensemble models and find feature importances to see whether they mimic the coefficients in the Logistic Regression model.
-+ Examine features beyond word use, e.g. post length (in modeling) and sentiment analysis.
-+ Gather more data - more subreddits, more genres, more posts!
++ Do some text classification modeling, i.e. feed in words and let a model tell you which artist they belong to. This would likely be a Logistic Regression model but I'd also like to run some Tree/Ensemble models. 
++ Scrape lyrics song-by-song so that I could compare the differents works of the same artist. I could compare Bob Dylan's 60s music to his 70s music, for example! 
++ Gather more data - more artists, more songs!
++ _What other analysis or modeling would you do using the lyrics of ten different classic rock artists??_ 
 
-## Acknowledgements
+## Citations 
 
-While I offer ample credit throughout my notebooks where I received help from others, I want to give an additional shoutout here to the people without whom this project would never have come to completion:
-
-+ Charlie Rice
-+ Hovanes Gasparian
-+ Prasoon Karmacharya
-+ John D. Hazard
-+ James Opacich
-+ Heather Johansen
-+ Jesse Tao
-+ Kira Helm
-+ CM Vigil April
-
-All these people spent time, care, energy, lifeblood to help me get here. Thank you.
