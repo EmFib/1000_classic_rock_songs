@@ -1,5 +1,6 @@
-# **1000 Classic Rock Songs**
+# <p style="text-align: center;">**1000 Classic Rock Songs**</p>
 
+&nbsp;  
 # Table of Contents
 
 - [Executive Summary](#executive-summary)
@@ -9,6 +10,7 @@
 - [Modeling](#modeling)
 - [Next Steps](#Next-Steps)
 
+&nbsp;  
 # Executive Summary
 
 For this project, I collected lyrics from the songs of twelve different classic rock musicians for the purpose of analyzing and comparing them using several different NLP methods. 
@@ -19,11 +21,12 @@ The NLP analyses so far performed on the data are:
 + Cosine similarity (between bodies of work)
 + Sentiment analysis 
 
-
+&nbsp;  
 # Data Collection
 
-*See notebook: [01_data_collection](https://github.com/EmFib/bob_dylan/blob/main/01_data_collection.ipynb)*
+##### *See notebook: [01_data_collection](https://github.com/EmFib/bob_dylan/blob/main/01_data_collection.ipynb)*
 
+&nbsp;  
 I collected song lyrics from Genius.com using their API and BeautifulSoup. Code for this section was heavily inspired by the tutorial [How to Scrape Song Lyrics: A Gentle Tutorial](https://medium.com/analytics-vidhya/how-to-scrape-song-lyrics-a-gentle-python-tutorial-5b1d4ab351d2) by Nick Pai, but I did have to make a couple edits and additions. 
 
 The functions I used can be found in the data collection notebook. 
@@ -31,8 +34,9 @@ The functions I used can be found in the data collection notebook.
 
 # Data Cleaning & Pre-Processing
 
-*See notebook: [02_data_cleaning](projects/bob_dylan/02_data_cleaning.ipynb)*
+##### *See notebook: [02_data_cleaning](https://github.com/EmFib/bob_dylan/blob/main/02_data_cleaning.ipynb)*
 
+&nbsp;  
 First step was to load the lyrics files into a fresh notebook, which took some finesse. In the process, I realized that in order to load all the files and insert them into a DataFrame, I needed (a) to have pickle instead of text files and (b) to use a `try/except` statement. 
 
 Alas, here is the hard-won, magical function for loading in my pickled lyrics files and inserting them into a dictionary called:
@@ -74,13 +78,16 @@ When I was finished cleaning (for the time being), the `lyrics` column in the fi
 
 I also used scikit-learn's `CountVectorizer` to tokenize the text and remove stopwords. I pickled the CountVectorizer object as _dtm.pkl_ to use in future analysis. 
 
-**Much of the code for cleaning and processing the data was borrowed from the _excellent_ [Natural Language Processing in Python](https://www.youtube.com/watch?v=xvqsFTUsOmc&t=1s&ab_channel=PyOhio) tutorial by Alice Zhao at PyOhio and the materials that came along with it. Please check out the [YouTube video](https://www.youtube.com/watch?v=xvqsFTUsOmc&t=1s&ab_channel=PyOhio) to learn more about NLP than you will from most formal education.** 
+&nbsp;
+> _Much of the code for cleaning and processing the data was inspired by or borrowed from the excellent [Natural Language Processing in Python](https://www.youtube.com/watch?v=xvqsFTUsOmc&t=1s&ab_channel=PyOhio) tutorial by Alice Zhao at PyOhio and the materials that came along with it. Please check out the [YouTube video](https://www.youtube.com/watch?v=xvqsFTUsOmc&t=1s&ab_channel=PyOhio) to learn more about NLP than you will from most formal education._ 
 
-
+&nbsp;  
 # EDA
 
-*See notebook: [03 - EDA](projects/classic_rock_lyrics/03_EDA.ipynb)*
+##### *See notebook: [03_EDA](https://github.com/EmFib/bob_dylan/blob/main/03_EDA.ipynb)*
 
+
+&nbsp;  
 The EDA process consisted mostly of tracking and counting words used by different artists. 
 
 Using the document-term, created a dictionary of the 30 most common words used by each musican. I then used the `Counter` dictionary subclass to find how many of the artists had the common words in their top 30, and I added these to the standard `CountVectorizer` English stop words to create a master stop words list. 
@@ -91,7 +98,6 @@ I wrote a function called `vectorized and plot` to show the most common words ac
 
 ![wordclouds](./images/wordclouds.png)
 
-
 To see the most commons words for each artist, minus all the stop words, I created a new dictionary and printed all the words in their top 50 that were not stop words. 
 
 I also created word clouds to visualize their most frequently-used words. (Again, stop words not included.)
@@ -100,15 +106,22 @@ Finally, I used `numpy` to find the total number of words and total number of _u
 
 ![uniquewords](num_words7.png)
 
-### _**Takeaways**_  
+### &emsp; _**Takeaways**_  
 + Bob Dylan, at 4482 words, has 60% more unique words throughout his music than the artist with the next greatest number of unique words - Leonard Cohen at 2799.
 + The average number of unique words across all 11 artistis is 2463, and Dylan's count is 82% greater.
 
+&nbsp;  
 # Modeling
 
+##### *See notebooks:* 
+##### - *[04_cosine_similarity](https://github.com/EmFib/bob_dylan/blob/main/04_cosine_similarity.ipynb)*
+##### - *[05_sentiment_analysis](https://github.com/EmFib/bob_dylan/blob/main/05_sentiment_analysis.ipynb)*
+
+&nbsp;  
 The modeling I did included looking at cosine simlirities between the musicians and sentiment analysis across their bodies of work. 
 
-&emsp; **Cosine Similarity** 
+&nbsp;  
+### **Cosine Similarity** 
 
 I used the `gensim` topic modeling library to find the cosine similarities between the different artists' lyrics. First, I put the ten 100-song catalogs for each artist into a corpus that included the lyrics for each artist into one list bulk set of words associated with that artist. From there, I transformed the corpus into the LSI space and indexed it using the deerwester index: 
 
@@ -194,7 +207,8 @@ This produced a DataFrame with the similarity scores between each pair of artist
 
 ##### _Note: I chose to produce the heatmap using the `similarities` DataFrame as is instead of converting to `similarities.corr()` since it was already showing correlation scores between each pair of artists._ 
 
-### _**Takeaways**_  
+&nbsp;  
+### &emsp; _**Takeaways**_  
 
 - The lyrics of songs by Bob Dylan, The Band, John Prine, Willie Nelson, and Neil Young exhibit the strongest similarities to one another. This is unsurprising for those familiar with their music, and many of them collaborated regularly and were heavily influenced by one another. Furthermore, Bob Dylan turned up high similarity scores with several of the other artists, perhaps as a result of his high number of unique words. (If you say a lot of words, there's a higher chance that some of it will align with otherwords!)
     -   **Cosine similarity score between Bob Dylan and John Prine is the highest: 0.85.** They are both known for their descriptive, personal, and compelling lyrics. Plus they've played together and have each expressed great respect for the other.
@@ -203,7 +217,8 @@ This produced a DataFrame with the similarity scores between each pair of artist
 - Janis Joplin's lyrics show to be the least similar to other artists, across the board. This is not surprising, but I do wonder about how this breaks down behind the `gensim` similarity query magic. All similarity scores between her and other artists were between 0.6 and 0.7, with three of them being 0.60. Janis's  highest score of 0.68 is with Linda Ronstadt -- another female artist.  `¯\_(ツ)_/¯`
 - David Bowie's lyrics also exhibited low similarity scores with other artists, and his highest score - 0.78 - was also with Linda Ronstadt. 
 
-&emsp; **Sentiment Analysis** 
+&nbsp;  
+### **Sentiment Analysis** 
 
 I used the Python [TextBlob](https://textblob.readthedocs.io/en/dev/) library to evaluate the subjectivity (fact vs. opinion) and polarity (negative vs. positive) of each artist's 100-song catalog. 
 
@@ -211,9 +226,10 @@ I used the Python [TextBlob](https://textblob.readthedocs.io/en/dev/) library to
 
 Given that song-writing is assumed to be fictional story-telling, both of these metrics are somewhat less relevant for lyrical compositions than for other purposes, i.e. online reviews or news stories. They are also less salient because that we are taking each artist's body of work as a whole, as opposed to song-by-song or split up by timeline (song-specific sentiment analysis is something that I hope to do someday though!). I do find it interesting to see what data science has to say about how positive different musicians are according to their words of their songs. The facts <--> opinions scale, as well, is more thought-provoking than anything, but the question of whether someone's songs are more autobiographical or more fantastical is a hot topic amongst musicphiles, and the subjectivity score would provide relevant fodder for such a discussion, alas. So... 
 
-### _**Takeaways**_  
+&nbsp;  
+### &emsp; _**Takeaways**_  
 
-##### _(to be taken with a grain of salt)_
+##### &emsp;  _(to be taken with a grain of salt)_
 
 + The Band, Bob Dylan, and John Prine are once again clumped together far on the negative side of the spectrum. Not entirely surprising, but I'd be very curious to understand better what elements of their lyrics caused them to point in this direction. _(Does anyone know how best to gain this sort of insight??)_
 + The Band, Bob Dylan, and John Prine all have scores putting their lyrics much closer to the Facts side than the opinions side, with Prine have the highest facts-leaning score. I theorize that this is because they all have vivid, verbose descriptions in their work, which could sound closer to a true story. 
@@ -222,6 +238,7 @@ Given that song-writing is assumed to be fictional story-telling, both of these 
 
 ##### _Note: This method for sentiment analysis was drawn from the _______ tutorial cited earlier._ 
 
+&nbsp;  
 # Next Steps 
 
 With more time and a bigger scope, there's a whole lot more I would like to do with the Reddit database and this concept. First and foremost:
@@ -231,6 +248,4 @@ With more time and a bigger scope, there's a whole lot more I would like to do w
 + Scrape lyrics song-by-song so that I could compare the differents works of the same artist. I could compare Bob Dylan's 60s music to his 70s music, for example! 
 + Gather more data - more artists, more songs!
 + _What other analysis or modeling would you do using the lyrics of ten different classic rock artists??_ 
-
-# Citations 
 
