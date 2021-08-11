@@ -1,17 +1,13 @@
-# **TALK THE TALK, WALK THE WALK**
+# **1000 Classic Rock Songs**
 
 # Table of Contents
 
-- [Executive Summary](#Executive-Summary)
+- [Executive Summary](#executive-summary)
 - [Data Collection](#Data-Collection)
-- [Data Cleaning & Pre-Processing](#Data-Cleaning-&-Pre-Processing)
+- [Data Cleaning & Pre-Processing](#Data-Cleaning--Pre-Processing)
 - [EDA](#EDA)
-- [Modeling](#Modeling)
-- [Evaluation & Analysis](#Evaluation-&-Analysis)
-- [Conclusion & Recommendations](#Conclusion-&-Recommendations)
-- [Next Steps & Future work](#Next-Steps-&-Future-work)
-
-
+- [Modeling](#modeling)
+- [Next Steps](#Next-Steps)
 
 # Executive Summary
 
@@ -226,7 +222,7 @@ Given that song-writing is assumed to be fictional story-telling, both of these 
 
 ##### _Note: This method for sentiment analysis was drawn from the _______ tutorial cited earlier._ 
 
-## Evaluation & Next Steps 
+# Next Steps 
 
 With more time and a bigger scope, there's a whole lot more I would like to do with the Reddit database and this concept. First and foremost:
 
@@ -236,5 +232,5 @@ With more time and a bigger scope, there's a whole lot more I would like to do w
 + Gather more data - more artists, more songs!
 + _What other analysis or modeling would you do using the lyrics of ten different classic rock artists??_ 
 
-## Citations 
+# Citations 
 
