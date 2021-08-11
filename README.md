@@ -20,14 +20,13 @@ For this project, I collected lyrics from the songs of twelve different classic 
 The NLP analyses so far performed on the data are: 
 
 + Number of words and number of unique words 
-+ (feature analysis)
 + Cosine similarity (between bodies of work)
 + Sentiment analysis 
 
 
 # Data Collection
 
-*See notebook: [01_data_collection](projects/bob_dylan/01_data_collection.ipynb)*
+*See notebook: [01_data_collection](https://github.com/EmFib/bob_dylan/blob/main/01_data_collection.ipynb)*
 
 I collected song lyrics from Genius.com using their API and BeautifulSoup. Code for this section was heavily inspired by the tutorial [How to Scrape Song Lyrics: A Gentle Tutorial](https://medium.com/analytics-vidhya/how-to-scrape-song-lyrics-a-gentle-python-tutorial-5b1d4ab351d2) by Nick Pai, but I did have to make a couple edits and additions. 
 
